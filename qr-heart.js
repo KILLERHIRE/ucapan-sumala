@@ -1,5 +1,5 @@
 (function () {
-  var INK = "#2b0d18";
+  var RED = "#e10600";
 
   var ALIGNMENT = [
     [],
@@ -126,65 +126,93 @@
     return false;
   }
 
-  function paintModules(ctx, qr, originX, originY, cell) {
-    var moduleCount = qr.getModuleCount();
-    var centers = alignmentCenters(moduleCount);
-    var quiet = 4;
-    var row;
-    var col;
-    var x;
-    var y;
+function isFormat(row, col, moduleCount) {
+  if (row === 8 && (col < 9 || col >= moduleCount - 8)) return true;
+  if (col === 8 && (row < 9 || row >= moduleCount - 8)) return true;
+  return false;
+}
 
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(originX, originY, (moduleCount + quiet * 2) * cell, (moduleCount + quiet * 2) * cell);
-    ctx.fillStyle = INK;
+function isProtected(row, col, moduleCount, centers) {
+  return isFinder(row, col, moduleCount) || row === 6 || col === 6 || isFormat(row, col, moduleCount);
+}
 
-    for (row = 0; row < moduleCount; row += 1) {
-      for (col = 0; col < moduleCount; col += 1) {
-        if (!qr.isDark(row, col)) continue;
-        x = originX + (col + quiet) * cell;
-        y = originY + (row + quiet) * cell;
-        if (isFinder(row, col, moduleCount) || row === 6 || col === 6 || isAlignment(row, col, centers)) {
-          ctx.fillRect(x, y, cell, cell);
-        } else {
-          ctx.fillRect(x + cell * 0.2, y + cell * 0.2, cell * 0.6, cell * 0.6);
-          heartPath(ctx, x + cell * 0.05, y + cell * 0.02, cell * 0.9);
-          ctx.fill();
-        }
-      }
+function inHeartShape(col, row, moduleCount) {
+  var u = (col + 0.5) / moduleCount;
+  var v = (row + 0.5) / moduleCount;
+  var lobe = 0.26;
+  var t;
+  var half;
+  var left;
+  var right;
+
+  if (Math.hypot(u - 0.3, v - 0.27) <= lobe || Math.hypot(u - 0.7, v - 0.27) <= lobe) {
+    return true;
+  }
+  if (row < 6 && Math.abs(col - (moduleCount - 1) / 2) < (6 - row) * 1.65) {
+    return false;
+  }
+  if (v < 0.14) return false;
+
+  t = Math.max(0, (v - 0.2) / 0.8);
+  half = 0.5 * Math.pow(1 - t, 0.35);
+  left = 0.5 - half;
+  right = 0.5 + half;
+  if (v > 0.7) {
+    left *= 1 - Math.min(1, (v - 0.7) / 0.22);
+  }
+  return u >= left && u <= right;
+}
+
+function moduleKept(row, col, moduleCount, centers) {
+  return isProtected(row, col, moduleCount, centers) || inHeartShape(col, row, moduleCount);
+}
+
+function paintModules(ctx, qr, originX, originY, cell) {
+  var moduleCount = qr.getModuleCount();
+  var centers = alignmentCenters(moduleCount);
+  var row;
+  var col;
+  var x;
+  var y;
+  var span = cell + 0.6;
+
+  for (row = 0; row < moduleCount; row += 1) {
+    for (col = 0; col < moduleCount; col += 1) {
+      if (!moduleKept(row, col, moduleCount, centers)) continue;
+      x = originX + col * cell;
+      y = originY + row * cell;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x, y, span, span);
     }
   }
 
-  function drawCode(canvas, url) {
-    var qr = createQr(url);
-    var moduleCount = qr.getModuleCount();
-    var cell = 12;
-    var qrSize = (moduleCount + 8) * cell;
-    var bleed = Math.ceil(qrSize * 0.38);
-    var size = qrSize + bleed * 2;
-    var dpr = 3;
-    var ctx = canvas.getContext("2d");
-    var heartSize = qrSize * 1.78;
-    var heartX;
-    var heartY;
-
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, size, size);
-
-    heartX = bleed + qrSize / 2 - heartSize / 2;
-    heartY = bleed + qrSize / 2 - heartSize * 0.58;
-    ctx.fillStyle = "rgba(180, 35, 75, 0.14)";
-    ctx.strokeStyle = "rgba(158, 28, 68, 0.7)";
-    ctx.lineWidth = Math.max(3, qrSize * 0.012);
-    heartPath(ctx, heartX, heartY, heartSize);
-    ctx.fill();
-    ctx.stroke();
-
-    paintModules(ctx, qr, bleed, bleed, cell);
-    return qr;
+  ctx.fillStyle = RED;
+  for (row = 0; row < moduleCount; row += 1) {
+    for (col = 0; col < moduleCount; col += 1) {
+      if (!qr.isDark(row, col) || !moduleKept(row, col, moduleCount, centers)) continue;
+      x = originX + col * cell;
+      y = originY + row * cell;
+      ctx.fillRect(x, y, span, span);
+    }
   }
+}
+
+function drawCode(canvas, url) {
+  var qr = createQr(url);
+  var moduleCount = qr.getModuleCount();
+  var cell = 14;
+  var pad = cell * 2;
+  var size = moduleCount * cell + pad * 2;
+  var dpr = 3;
+  var ctx = canvas.getContext("2d");
+
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, size, size);
+  paintModules(ctx, qr, pad, pad, cell);
+  return qr;
+}
 
   function roundRect(ctx, x, y, width, height, radius) {
     ctx.beginPath();
@@ -219,16 +247,12 @@ function drawCard(canvas, config) {
   var qr = createQr(config.siteUrl);
   var moduleCount = qr.getModuleCount();
   var cell = 14;
-  var qrSize = (moduleCount + 8) * cell;
+  var qrSize = moduleCount * cell;
   var lines = nameLines(config.partnerName);
   var scale = 2;
   var width = 1080;
-  var heartSize = qrSize * 1.52;
-  var heartTop = 530;
-  var heartY = heartTop;
-  var qrY = heartY + heartSize * 0.58 - qrSize / 2;
-  var heartBottom = heartY + heartSize;
-  var height = Math.ceil(heartBottom + 250);
+  var qrY = 500;
+  var height = qrY + qrSize + 270;
   var ctx = canvas.getContext("2d");
   var script = '"Great Vibes", cursive';
   var serif = '"Cormorant Garamond", Georgia, serif';
@@ -238,13 +262,10 @@ function drawCard(canvas, config) {
   var nameSize;
   var i;
 
-  while (qrSize > 620 && cell > 8) {
+  while (qrSize > 640 && cell > 8) {
     cell -= 1;
-    qrSize = (moduleCount + 8) * cell;
-    heartSize = qrSize * 1.52;
-    qrY = heartY + heartSize * 0.58 - qrSize / 2;
-    heartBottom = heartY + heartSize;
-    height = Math.ceil(heartBottom + 250);
+    qrSize = moduleCount * cell;
+    height = qrY + qrSize + 270;
   }
 
   canvas.width = width * scale;
@@ -298,26 +319,19 @@ function drawCard(canvas, config) {
     ctx.fillText(lines[i], width / 2, 390 + i * Math.round(nameSize * 0.78));
   }
 
-  ctx.fillStyle = "rgba(180, 35, 75, 0.13)";
-  ctx.strokeStyle = "rgba(158, 28, 68, 0.75)";
-  ctx.lineWidth = 8;
-  heartPath(ctx, width / 2 - heartSize / 2, heartY, heartSize);
-  ctx.fill();
-  ctx.stroke();
-
   paintModules(ctx, qr, qrX, qrY, cell);
 
   ctx.fillStyle = "#4a2030";
   ctx.font = "700 38px " + sans;
-  ctx.fillText("Scan untuk membuka ucapan", width / 2, heartBottom + 64);
+  ctx.fillText("Scan untuk membuka ucapan", width / 2, qrY + qrSize + 86);
 
   ctx.fillStyle = "#9f1d45";
   ctx.font = "600 36px " + serif;
-  ctx.fillText("dari " + config.fromName, width / 2, heartBottom + 122);
+  ctx.fillText("dari " + config.fromName, width / 2, qrY + qrSize + 140);
 
   ctx.fillStyle = "#8d5a6b";
   ctx.font = "700 28px " + sans;
-  ctx.fillText(config.fromTagline, width / 2, heartBottom + 172);
+  ctx.fillText(config.fromTagline, width / 2, qrY + qrSize + 188);
 }
 
   window.SumalaQr = {
