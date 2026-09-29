@@ -202,18 +202,11 @@
     });
   }
 
-  function paintQr() {
-    var note = document.getElementById("url-note");
-    note.hidden = !window.SumalaQr.isPlaceholder(cfg.siteUrl);
-    window.SumalaQr.drawCode(document.getElementById("qr-canvas"), cfg.siteUrl);
-  }
-
   applyCopy();
   buildDots();
   scroller.scrollLeft = 0;
   watchGallery();
   bindLightbox();
-  paintQr();
   playLoveIntro(function () {
     openGift();
     spawnHearts();

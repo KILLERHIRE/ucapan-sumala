@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Great+Vibes&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=9">
+  <link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
   <div class="love-intro" id="love-intro" aria-hidden="true"></div>
@@ -105,20 +105,6 @@
         <p class="tagline" id="sign-tag">orang paling cool sedunia</p>
       </article>
 
-      <section class="qr-block">
-        <p class="section-kicker">Kartu</p>
-        <h2>QR berbentuk hati</h2>
-        <p class="hero-note">Scan kartu ini kalau ucapannya mau dibuka lagi.</p>
-        <div class="qr-frame">
-          <canvas id="qr-canvas" role="img" aria-label="QR code berbentuk hati untuk membuka ucapan ulang tahun"></canvas>
-        </div>
-        <p class="url-note" id="url-note" hidden>
-          QR ini belum mengarah ke halaman di internet. Setelah websitenya punya link, ganti
-          <code>siteUrl</code> di <code>config.js</code>, lalu buka ulang halaman ini.
-        </p>
-        <a class="btn" href="kartu-qr.html">Simpan kartu untuk WhatsApp</a>
-      </section>
-
       <p class="footer-note">Dibuat pelan-pelan, untuk satu orang.</p>
     </div>
   </main>
@@ -130,9 +116,7 @@
     <button class="lightbox-btn lightbox-next" id="light-next" type="button" aria-label="Foto berikutnya">›</button>
   </dialog>
 
-  <script src="vendor/qrcode.js"></script>
-  <script src="qr-heart.js?v=8"></script>
   <script src="config.js"></script>
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=6"></script>
 </body>
 </html>

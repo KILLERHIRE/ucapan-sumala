@@ -144,7 +144,6 @@ main,
 .heart-button:focus-visible,
 .shot:focus-visible,
 .icon-btn:focus-visible,
-.btn:focus-visible,
 .dot:focus-visible,
 .lightbox-btn:focus-visible {
   outline: 3px solid var(--rose);
@@ -224,8 +223,7 @@ html.just-opened main {
   line-height: 1.6;
 }
 
-.letter,
-.qr-block {
+.letter {
   margin-top: 2.4rem;
 }
 
@@ -240,8 +238,7 @@ html.just-opened main {
 }
 
 .gallery-head h2,
-.letter h2,
-.qr-block h2 {
+.letter h2 {
   margin: 0.2rem 0 0;
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(2rem, 6vw, 3rem);
@@ -360,58 +357,6 @@ html.just-opened main {
   color: var(--muted);
   font-weight: 700;
 }
-
-.qr-block { text-align: center; }
-
-.qr-frame {
-  width: min(100%, 400px);
-  margin: 1.15rem auto 0;
-  padding: 0.85rem 0.7rem 0.4rem;
-  background: #fff;
-  border-radius: 28px;
-  box-shadow: var(--shadow);
-}
-
-.qr-frame canvas {
-  width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-}
-
-.url-note {
-  max-width: 36rem;
-  margin: 1rem auto 0;
-  padding: 0.85rem 1rem;
-  border-radius: 14px;
-  background: rgba(255, 253, 251, 0.8);
-  color: var(--rose-deep);
-  line-height: 1.5;
-}
-
-.url-note code {
-  font-family: Consolas, "Courier New", monospace;
-  font-size: 0.92em;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  margin-top: 1rem;
-  padding: 0.75rem 1.3rem;
-  border: 0;
-  border-radius: 999px;
-  background: var(--rose);
-  color: #fff;
-  font: inherit;
-  font-weight: 700;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.btn:hover { background: var(--rose-deep); }
 
 .footer-note {
   margin: 2rem 0 0;
