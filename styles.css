@@ -364,14 +364,19 @@ html.just-opened main {
 .qr-block { text-align: center; }
 
 .qr-frame {
-  width: min(100%, 360px);
-  margin: 1rem auto 0;
+  width: min(100%, 400px);
+  margin: 1.15rem auto 0;
+  padding: 0.85rem 0.7rem 0.4rem;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: var(--shadow);
 }
 
 .qr-frame canvas {
   width: 100%;
   height: auto;
   display: block;
+  margin: 0 auto;
 }
 
 .url-note {

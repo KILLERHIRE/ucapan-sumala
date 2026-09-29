@@ -1,50 +1,6 @@
 (function () {
   var RED = "#e10600";
 
-  var ALIGNMENT = [
-    [],
-    [],
-    [6, 18],
-    [6, 22],
-    [6, 26],
-    [6, 30],
-    [6, 34],
-    [6, 22, 38],
-    [6, 24, 42],
-    [6, 26, 46],
-    [6, 28, 50],
-    [6, 30, 54],
-    [6, 32, 58],
-    [6, 34, 62],
-    [6, 26, 46, 66],
-    [6, 26, 48, 70],
-    [6, 26, 50, 74],
-    [6, 30, 54, 78],
-    [6, 30, 56, 82],
-    [6, 30, 58, 86],
-    [6, 34, 62, 90],
-    [6, 28, 50, 72, 94],
-    [6, 26, 50, 74, 98],
-    [6, 30, 54, 78, 102],
-    [6, 28, 54, 80, 106],
-    [6, 32, 58, 84, 110],
-    [6, 30, 58, 86, 114],
-    [6, 34, 62, 90, 118],
-    [6, 26, 50, 74, 98, 122],
-    [6, 30, 54, 78, 102, 126],
-    [6, 26, 52, 78, 104, 130],
-    [6, 30, 56, 82, 108, 134],
-    [6, 34, 60, 86, 112, 138],
-    [6, 30, 58, 86, 114, 142],
-    [6, 34, 62, 90, 118, 146],
-    [6, 30, 54, 78, 102, 126, 150],
-    [6, 24, 50, 76, 102, 128, 154],
-    [6, 28, 54, 80, 106, 132, 158],
-    [6, 32, 58, 84, 110, 136, 162],
-    [6, 26, 54, 82, 110, 138, 166],
-    [6, 30, 58, 86, 114, 142, 170]
-  ];
-
   function isPlaceholder(url) {
     return !url || url.indexOf("alamat-website-nanti") !== -1;
   }
@@ -85,28 +41,48 @@
     ctx.closePath();
   }
 
-  function versionOf(moduleCount) {
-    return (moduleCount - 17) / 4;
+  function visualPads(moduleCount) {
+    return {
+      left: Math.max(4, Math.round(moduleCount * 7 / 37)),
+      right: Math.max(4, Math.round(moduleCount * 7 / 37)),
+      top: Math.max(3, Math.round(moduleCount * 5 / 37)),
+      bottom: Math.max(10, Math.round(moduleCount * 18 / 37))
+    };
   }
 
-  function alignmentCenters(moduleCount) {
-    var positions = ALIGNMENT[versionOf(moduleCount)] || [];
-    var centers = [];
+  function lerpKeys(v, keys) {
     var i;
-    var j;
-    var row;
-    var col;
-    for (i = 0; i < positions.length; i += 1) {
-      for (j = 0; j < positions.length; j += 1) {
-        row = positions[i];
-        col = positions[j];
-        if (row <= 8 && col <= 8) continue;
-        if (row <= 8 && col >= moduleCount - 9) continue;
-        if (row >= moduleCount - 9 && col <= 8) continue;
-        centers.push([row, col]);
+    var t;
+    if (v <= keys[0][0]) return keys[0][1];
+    for (i = 1; i < keys.length; i += 1) {
+      if (v <= keys[i][0]) {
+        t = (v - keys[i - 1][0]) / (keys[i][0] - keys[i - 1][0]);
+        t = t * t * (3 - 2 * t);
+        return keys[i - 1][1] + (keys[i][1] - keys[i - 1][1]) * t;
       }
     }
-    return centers;
+    return keys[keys.length - 1][1];
+  }
+
+  function inHeartShape(u, v) {
+    var lx = (u - 0.302) / 0.292;
+    var rx = (u - 0.698) / 0.292;
+    var ly = (v - 0.252) / 0.218;
+    var half;
+    if (lx * lx + ly * ly <= 1) return true;
+    if (rx * rx + ly * ly <= 1) return true;
+    if (v < 0.22 || v > 0.995) return false;
+    half = lerpKeys(v, [
+      [0.22, 0.495],
+      [0.45, 0.455],
+      [0.62, 0.392],
+      [0.705, 0.36],
+      [0.78, 0.24],
+      [0.87, 0.125],
+      [0.94, 0.052],
+      [0.995, 0.012]
+    ]);
+    return Math.abs(u - 0.5) <= half;
   }
 
   function isFinder(row, col, moduleCount) {
@@ -116,103 +92,116 @@
     return box(0, 0) || box(moduleCount - 7, 0) || box(0, moduleCount - 7);
   }
 
-  function isAlignment(row, col, centers) {
-    var i;
-    for (i = 0; i < centers.length; i += 1) {
-      if (Math.abs(row - centers[i][0]) <= 2 && Math.abs(col - centers[i][1]) <= 2) {
-        return true;
+  function decorativeDark(row, col) {
+    var n = ((row * 131 + col * 137 + row * col * 17) ^ (row * 7 + col * 13)) >>> 0;
+    return n % 97 < 47;
+  }
+
+  function touchesFinderHalo(vr, vc, padT, padL, moduleCount) {
+    var r = vr - padT;
+    var c = vc - padL;
+    var dr;
+    var dc;
+    var rr;
+    var cc;
+    if (r >= 0 && r < moduleCount && c >= 0 && c < moduleCount) return false;
+    for (dr = -1; dr <= 1; dr += 1) {
+      for (dc = -1; dc <= 1; dc += 1) {
+        rr = r + dr;
+        cc = c + dc;
+        if (rr >= 0 && rr < moduleCount && cc >= 0 && cc < moduleCount && isFinder(rr, cc, moduleCount)) {
+          return true;
+        }
       }
     }
     return false;
   }
 
-function isFormat(row, col, moduleCount) {
-  if (row === 8 && (col < 9 || col >= moduleCount - 8)) return true;
-  if (col === 8 && (row < 9 || row >= moduleCount - 8)) return true;
-  return false;
-}
-
-function isProtected(row, col, moduleCount, centers) {
-  return isFinder(row, col, moduleCount) || row === 6 || col === 6 || isFormat(row, col, moduleCount);
-}
-
-function inHeartShape(col, row, moduleCount) {
-  var u = (col + 0.5) / moduleCount;
-  var v = (row + 0.5) / moduleCount;
-  var lobe = 0.26;
-  var t;
-  var half;
-  var left;
-  var right;
-
-  if (Math.hypot(u - 0.3, v - 0.27) <= lobe || Math.hypot(u - 0.7, v - 0.27) <= lobe) {
-    return true;
+  function heartMetrics(moduleCount, cell) {
+    var pad = visualPads(moduleCount);
+    return {
+      pad: pad,
+      cols: moduleCount + pad.left + pad.right,
+      rows: moduleCount + pad.top + pad.bottom,
+      width: (moduleCount + pad.left + pad.right) * cell,
+      height: (moduleCount + pad.top + pad.bottom) * cell
+    };
   }
-  if (row < 6 && Math.abs(col - (moduleCount - 1) / 2) < (6 - row) * 1.65) {
-    return false;
-  }
-  if (v < 0.14) return false;
 
-  t = Math.max(0, (v - 0.2) / 0.8);
-  half = 0.5 * Math.pow(1 - t, 0.35);
-  left = 0.5 - half;
-  right = 0.5 + half;
-  if (v > 0.7) {
-    left *= 1 - Math.min(1, (v - 0.7) / 0.22);
-  }
-  return u >= left && u <= right;
-}
+  function paintModules(ctx, qr, originX, originY, cell) {
+    var moduleCount = qr.getModuleCount();
+    var metrics = heartMetrics(moduleCount, cell);
+    var pad = metrics.pad;
+    var cols = metrics.cols;
+    var rows = metrics.rows;
+    var span = cell + 0.4;
+    var vr;
+    var vc;
+    var u;
+    var v;
+    var r;
+    var c;
+    var real;
+    var finder;
+    var inside;
+    var dark;
+    var x;
+    var y;
 
-function moduleKept(row, col, moduleCount, centers) {
-  return isProtected(row, col, moduleCount, centers) || inHeartShape(col, row, moduleCount);
-}
+    ctx.imageSmoothingEnabled = false;
 
-function paintModules(ctx, qr, originX, originY, cell) {
-  var moduleCount = qr.getModuleCount();
-  var centers = alignmentCenters(moduleCount);
-  var row;
-  var col;
-  var x;
-  var y;
-  var span = cell + 0.6;
+    for (vr = 0; vr < rows; vr += 1) {
+      for (vc = 0; vc < cols; vc += 1) {
+        u = (vc + 0.5) / cols;
+        v = (vr + 0.5) / rows;
+        r = vr - pad.top;
+        c = vc - pad.left;
+        real = r >= 0 && r < moduleCount && c >= 0 && c < moduleCount;
+        finder = real && isFinder(r, c, moduleCount);
+        inside = inHeartShape(u, v);
+        if (!finder && !inside) continue;
 
-  for (row = 0; row < moduleCount; row += 1) {
-    for (col = 0; col < moduleCount; col += 1) {
-      if (!moduleKept(row, col, moduleCount, centers)) continue;
-      x = originX + col * cell;
-      y = originY + row * cell;
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(x, y, span, span);
+        if (real) {
+          dark = qr.isDark(r, c);
+        } else if (touchesFinderHalo(vr, vc, pad.top, pad.left, moduleCount)) {
+          dark = false;
+        } else {
+          dark = decorativeDark(vr, vc);
+        }
+
+        x = originX + vc * cell;
+        y = originY + vr * cell;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x, y, span, span);
+        if (dark) {
+          ctx.fillStyle = RED;
+          ctx.fillRect(x, y, span, span);
+        }
+      }
     }
+
+    return metrics;
   }
 
-  ctx.fillStyle = RED;
-  for (row = 0; row < moduleCount; row += 1) {
-    for (col = 0; col < moduleCount; col += 1) {
-      if (!qr.isDark(row, col) || !moduleKept(row, col, moduleCount, centers)) continue;
-      x = originX + col * cell;
-      y = originY + row * cell;
-      ctx.fillRect(x, y, span, span);
-    }
+  function drawCode(canvas, url) {
+    var qr = createQr(url);
+    var moduleCount = qr.getModuleCount();
+    var cell = 12;
+    var metrics = heartMetrics(moduleCount, cell);
+    var quiet = cell * 3;
+    var width = metrics.width + quiet * 2;
+    var height = metrics.height + quiet * 2;
+    var dpr = 3;
+    var ctx = canvas.getContext("2d");
+
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, width, height);
+    paintModules(ctx, qr, quiet, quiet, cell);
+    return qr;
   }
-}
-
-function drawCode(canvas, url) {
-  var qr = createQr(url);
-  var moduleCount = qr.getModuleCount();
-  var cell = 14;
-  var pad = cell * 2;
-  var size = moduleCount * cell + pad * 2;
-  var dpr = 3;
-  var ctx = canvas.getContext("2d");
-
-  canvas.width = size * dpr;
-  canvas.height = size * dpr;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, size, size);
-  paintModules(ctx, qr, pad, pad, cell);
-  return qr;
-}
 
   function roundRect(ctx, x, y, width, height, radius) {
     ctx.beginPath();
@@ -243,96 +232,106 @@ function drawCode(canvas, url) {
     return next;
   }
 
-function drawCard(canvas, config) {
-  var qr = createQr(config.siteUrl);
-  var moduleCount = qr.getModuleCount();
-  var cell = 14;
-  var qrSize = moduleCount * cell;
-  var lines = nameLines(config.partnerName);
-  var scale = 2;
-  var width = 1080;
-  var qrY = 500;
-  var height = qrY + qrSize + 270;
-  var ctx = canvas.getContext("2d");
-  var script = '"Great Vibes", cursive';
-  var serif = '"Cormorant Garamond", Georgia, serif';
-  var sans = 'Nunito, "Segoe UI", sans-serif';
-  var qrX = (width - qrSize) / 2;
-  var gradient;
-  var nameSize;
-  var i;
+  function drawCard(canvas, config) {
+    var qr = createQr(config.siteUrl);
+    var moduleCount = qr.getModuleCount();
+    var lines = nameLines(config.partnerName);
+    var scale = 2;
+    var width = 1080;
+    var cell = 13;
+    var metrics = heartMetrics(moduleCount, cell);
+    var measure = canvas.getContext("2d");
+    var ctx;
+    var script = '"Great Vibes", cursive';
+    var serif = '"Cormorant Garamond", Georgia, serif';
+    var sans = 'Nunito, "Segoe UI", sans-serif';
+    var sidePad = 120;
+    var qrX;
+    var qrY;
+    var nameSize = 86;
+    var nameStep;
+    var nameTop = 318;
+    var innerTop = 48;
+    var innerBottom = 48;
+    var height;
+    var gradient;
+    var i;
 
-  while (qrSize > 640 && cell > 8) {
-    cell -= 1;
-    qrSize = moduleCount * cell;
-    height = qrY + qrSize + 270;
+    while (metrics.width > width - sidePad * 2 && cell > 8) {
+      cell -= 1;
+      metrics = heartMetrics(moduleCount, cell);
+    }
+
+    for (i = 0; i < lines.length; i += 1) {
+      nameSize = Math.min(nameSize, fitFont(measure, lines[i], width - 240, script, nameSize, 48, "400"));
+    }
+    nameStep = Math.round(nameSize * 0.78);
+    qrY = nameTop + lines.length * nameStep + 28;
+    qrX = (width - metrics.width) / 2;
+    height = qrY + metrics.height + 196 + innerBottom;
+
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    ctx = canvas.getContext("2d");
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+
+    gradient = ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, "#fff7f8");
+    gradient.addColorStop(0.55, "#fde8ee");
+    gradient.addColorStop(1, "#f6d0dc");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.save();
+    ctx.globalAlpha = 0.22;
+    ctx.fillStyle = "#c22555";
+    heartPath(ctx, -10, 20, 90);
+    ctx.fill();
+    heartPath(ctx, width - 80, 36, 100);
+    ctx.fill();
+    heartPath(ctx, -6, height - 100, 86);
+    ctx.fill();
+    heartPath(ctx, width - 92, height - 120, 108);
+    ctx.fill();
+    ctx.restore();
+
+    roundRect(ctx, 58, innerTop, width - 116, height - innerTop - innerBottom, 46);
+    ctx.fillStyle = "#fffdfb";
+    ctx.fill();
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#8d5a6b";
+    ctx.font = "700 28px " + sans;
+    ctx.fillText(config.birthdayLabel.toUpperCase(), width / 2, 128);
+
+    ctx.fillStyle = "#4a2030";
+    ctx.font = "600 62px " + serif;
+    ctx.fillText("Selamat Ulang Tahun", width / 2, 198);
+
+    ctx.fillStyle = "#9f1d45";
+    ctx.font = "600 48px " + serif;
+    ctx.fillText("ke-" + config.age, width / 2, 256);
+
+    ctx.fillStyle = "#9f1d45";
+    for (i = 0; i < lines.length; i += 1) {
+      ctx.font = "400 " + nameSize + "px " + script;
+      ctx.fillText(lines[i], width / 2, nameTop + i * nameStep);
+    }
+
+    paintModules(ctx, qr, qrX, qrY, cell);
+
+    ctx.fillStyle = "#4a2030";
+    ctx.font = "700 36px " + sans;
+    ctx.fillText("Scan untuk membuka ucapan", width / 2, qrY + metrics.height + 58);
+
+    ctx.fillStyle = "#9f1d45";
+    ctx.font = "600 34px " + serif;
+    ctx.fillText("dari " + config.fromName, width / 2, qrY + metrics.height + 106);
+
+    ctx.fillStyle = "#8d5a6b";
+    ctx.font = "700 26px " + sans;
+    ctx.fillText(config.fromTagline, width / 2, qrY + metrics.height + 148);
   }
-
-  canvas.width = width * scale;
-  canvas.height = height * scale;
-  ctx.setTransform(scale, 0, 0, scale, 0, 0);
-
-  gradient = ctx.createLinearGradient(0, 0, 0, height);
-  gradient.addColorStop(0, "#fff7f8");
-  gradient.addColorStop(0.55, "#fde8ee");
-  gradient.addColorStop(1, "#f6d0dc");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, width, height);
-
-  ctx.save();
-  ctx.globalAlpha = 0.22;
-  ctx.fillStyle = "#c22555";
-  heartPath(ctx, -10, 20, 90);
-  ctx.fill();
-  heartPath(ctx, width - 80, 36, 100);
-  ctx.fill();
-  heartPath(ctx, -6, height - 100, 86);
-  ctx.fill();
-  heartPath(ctx, width - 92, height - 120, 108);
-  ctx.fill();
-  ctx.restore();
-
-  roundRect(ctx, 58, 48, width - 116, height - 96, 46);
-  ctx.fillStyle = "#fffdfb";
-  ctx.fill();
-
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#8d5a6b";
-  ctx.font = "700 28px " + sans;
-  ctx.fillText(config.birthdayLabel.toUpperCase(), width / 2, 150);
-
-  ctx.fillStyle = "#4a2030";
-  ctx.font = "600 62px " + serif;
-  ctx.fillText("Selamat Ulang Tahun", width / 2, 230);
-
-  ctx.fillStyle = "#9f1d45";
-  ctx.font = "600 48px " + serif;
-  ctx.fillText("ke-" + config.age, width / 2, 292);
-
-  nameSize = 86;
-  for (i = 0; i < lines.length; i += 1) {
-    nameSize = Math.min(nameSize, fitFont(ctx, lines[i], width - 240, script, nameSize, 48, "400"));
-  }
-  ctx.fillStyle = "#9f1d45";
-  for (i = 0; i < lines.length; i += 1) {
-    ctx.font = "400 " + nameSize + "px " + script;
-    ctx.fillText(lines[i], width / 2, 390 + i * Math.round(nameSize * 0.78));
-  }
-
-  paintModules(ctx, qr, qrX, qrY, cell);
-
-  ctx.fillStyle = "#4a2030";
-  ctx.font = "700 38px " + sans;
-  ctx.fillText("Scan untuk membuka ucapan", width / 2, qrY + qrSize + 86);
-
-  ctx.fillStyle = "#9f1d45";
-  ctx.font = "600 36px " + serif;
-  ctx.fillText("dari " + config.fromName, width / 2, qrY + qrSize + 140);
-
-  ctx.fillStyle = "#8d5a6b";
-  ctx.font = "700 28px " + sans;
-  ctx.fillText(config.fromTagline, width / 2, qrY + qrSize + 188);
-}
 
   window.SumalaQr = {
     isPlaceholder: isPlaceholder,
