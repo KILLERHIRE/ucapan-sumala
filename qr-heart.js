@@ -235,40 +235,28 @@
   function drawCard(canvas, config) {
     var qr = createQr(config.siteUrl);
     var moduleCount = qr.getModuleCount();
-    var lines = nameLines(config.partnerName);
     var scale = 2;
     var width = 1080;
     var cell = 13;
     var metrics = heartMetrics(moduleCount, cell);
-    var measure = canvas.getContext("2d");
     var ctx;
-    var script = '"Great Vibes", cursive';
-    var serif = '"Cormorant Garamond", Georgia, serif';
-    var sans = 'Nunito, "Segoe UI", sans-serif';
-    var sidePad = 120;
-    var qrX;
-    var qrY;
-    var nameSize = 86;
-    var nameStep;
-    var nameTop = 318;
+    var sidePad = 150;
+    var padY = 88;
     var innerTop = 48;
     var innerBottom = 48;
+    var qrX;
+    var qrY;
     var height;
     var gradient;
-    var i;
 
     while (metrics.width > width - sidePad * 2 && cell > 8) {
       cell -= 1;
       metrics = heartMetrics(moduleCount, cell);
     }
 
-    for (i = 0; i < lines.length; i += 1) {
-      nameSize = Math.min(nameSize, fitFont(measure, lines[i], width - 240, script, nameSize, 48, "400"));
-    }
-    nameStep = Math.round(nameSize * 0.78);
-    qrY = nameTop + lines.length * nameStep + 28;
     qrX = (width - metrics.width) / 2;
-    height = qrY + metrics.height + 196 + innerBottom;
+    qrY = innerTop + padY;
+    height = qrY + metrics.height + padY + innerBottom;
 
     canvas.width = width * scale;
     canvas.height = height * scale;
@@ -283,15 +271,15 @@
     ctx.fillRect(0, 0, width, height);
 
     ctx.save();
-    ctx.globalAlpha = 0.22;
+    ctx.globalAlpha = 0.28;
     ctx.fillStyle = "#c22555";
-    heartPath(ctx, -10, 20, 90);
+    heartPath(ctx, -18, 18, 150);
     ctx.fill();
-    heartPath(ctx, width - 80, 36, 100);
+    heartPath(ctx, width - 148, 36, 168);
     ctx.fill();
-    heartPath(ctx, -6, height - 100, 86);
+    heartPath(ctx, -24, height - 168, 150);
     ctx.fill();
-    heartPath(ctx, width - 92, height - 120, 108);
+    heartPath(ctx, width - 160, height - 186, 176);
     ctx.fill();
     ctx.restore();
 
@@ -299,38 +287,7 @@
     ctx.fillStyle = "#fffdfb";
     ctx.fill();
 
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#8d5a6b";
-    ctx.font = "700 28px " + sans;
-    ctx.fillText(config.birthdayLabel.toUpperCase(), width / 2, 128);
-
-    ctx.fillStyle = "#4a2030";
-    ctx.font = "600 62px " + serif;
-    ctx.fillText("Selamat Ulang Tahun", width / 2, 198);
-
-    ctx.fillStyle = "#9f1d45";
-    ctx.font = "600 48px " + serif;
-    ctx.fillText("ke-" + config.age, width / 2, 256);
-
-    ctx.fillStyle = "#9f1d45";
-    for (i = 0; i < lines.length; i += 1) {
-      ctx.font = "400 " + nameSize + "px " + script;
-      ctx.fillText(lines[i], width / 2, nameTop + i * nameStep);
-    }
-
     paintModules(ctx, qr, qrX, qrY, cell);
-
-    ctx.fillStyle = "#4a2030";
-    ctx.font = "700 36px " + sans;
-    ctx.fillText("Scan untuk membuka ucapan", width / 2, qrY + metrics.height + 58);
-
-    ctx.fillStyle = "#9f1d45";
-    ctx.font = "600 34px " + serif;
-    ctx.fillText("dari " + config.fromName, width / 2, qrY + metrics.height + 106);
-
-    ctx.fillStyle = "#8d5a6b";
-    ctx.font = "700 26px " + sans;
-    ctx.fillText(config.fromTagline, width / 2, qrY + metrics.height + 148);
   }
 
   window.SumalaQr = {

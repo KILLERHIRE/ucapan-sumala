@@ -4,7 +4,7 @@
   var painted = false;
 
   function paint() {
-    window.SumalaQr.drawCode(canvas, cfg.siteUrl);
+    window.SumalaQr.drawCard(canvas, cfg);
     painted = true;
   }
 
