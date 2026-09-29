@@ -35,11 +35,18 @@
     document.getElementById("hero-title").focus();
   }
 
+  var HEART_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+  var HEART_COLORS = ["#c22555", "#e25b86", "#9f1d45", "#f07aa0", "#d41f5c"];
+
+  function prefersLessMotion() {
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
   function spawnHearts() {
     var sky = document.getElementById("sky");
     var i;
     var heart;
-    for (i = 0; i < 12; i += 1) {
+    for (i = 0; i < 14; i += 1) {
       heart = document.createElement("span");
       heart.className = "floater";
       heart.textContent = "♥";
@@ -49,6 +56,46 @@
       heart.style.animationDelay = (-Math.random() * 16) + "s";
       sky.appendChild(heart);
     }
+  }
+
+  function playLoveIntro(done) {
+    var intro = document.getElementById("love-intro");
+    var count = 56;
+    var i;
+    var heart;
+    var delay;
+    var duration;
+
+    if (!intro || prefersLessMotion()) {
+      done();
+      return;
+    }
+
+    for (i = 0; i < count; i += 1) {
+      heart = document.createElement("span");
+      heart.className = "love-burst";
+      heart.innerHTML = HEART_SVG;
+      heart.style.left = (Math.random() * 94) + "%";
+      heart.style.fontSize = (22 + Math.random() * 46) + "px";
+      heart.style.color = HEART_COLORS[i % HEART_COLORS.length];
+      if (i < 24) {
+        delay = 0;
+        heart.style.top = (8 + Math.random() * 78) + "%";
+        heart.style.bottom = "auto";
+      } else {
+        delay = 0.25 + Math.random() * 1.8;
+      }
+      duration = 3.4 + Math.random() * 1.3;
+      heart.style.animationDelay = delay + "s";
+      heart.style.animationDuration = duration + "s";
+      heart.style.setProperty("--drift", Math.round(-90 + Math.random() * 180) + "px");
+      intro.appendChild(heart);
+    }
+
+    window.setTimeout(function () {
+      intro.classList.add("is-done");
+      done();
+    }, 3600);
   }
 
   function scrollToIndex(index) {
@@ -162,12 +209,15 @@
   }
 
   applyCopy();
-  spawnHearts();
   buildDots();
   scroller.scrollLeft = 0;
   watchGallery();
   bindLightbox();
   paintQr();
+  playLoveIntro(function () {
+    openGift();
+    spawnHearts();
+  });
 
   document.getElementById("open-gift").addEventListener("click", openGift);
   document.getElementById("gal-prev").addEventListener("click", function () {
