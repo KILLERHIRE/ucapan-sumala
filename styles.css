@@ -343,6 +343,47 @@ html.just-opened main {
   font-weight: 700;
 }
 
+.closing {
+  margin: 3.4rem auto 0;
+  max-width: 580px;
+  text-align: center;
+}
+
+.closing-card {
+  margin-bottom: 0;
+}
+
+.closing-card .polaroid {
+  transform: none;
+}
+
+.closing-card .shot img {
+  height: min(56vh, 500px);
+  object-position: center 38%;
+}
+
+.closing-verse {
+  margin: 0.2rem auto 0;
+  max-width: 22em;
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.closing-verse p {
+  margin: 0.15rem 0 0;
+  color: var(--rose);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1.2rem, 3.4vw, 1.65rem);
+  line-height: 1.5;
+}
+
+.memory.is-in .closing-verse {
+  opacity: 1;
+  transform: none;
+  transition: opacity 1s ease 0.28s, transform 1s ease 0.28s;
+}
+
 .footer-note {
   margin: 2rem 0 0;
   text-align: center;
@@ -468,7 +509,8 @@ html.just-opened main {
   html.just-opened main { animation: none; }
   .love-intro { display: none; }
   .reveal,
-  .memory-note {
+  .memory-note,
+  .closing-verse {
     opacity: 1;
     transform: none;
     transition: none;
