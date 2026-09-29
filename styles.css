@@ -358,8 +358,9 @@ html.just-opened main {
 }
 
 .closing-card .shot img {
-  height: min(56vh, 500px);
-  object-position: center 38%;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
 }
 
 .closing-verse {
