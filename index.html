@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Great+Vibes&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=10">
+  <link rel="stylesheet" href="styles.css?v=13">
 </head>
 <body>
   <div class="love-intro" id="love-intro" aria-hidden="true"></div>
@@ -40,61 +40,80 @@
           <span id="name-line-1">Ayang beb</span>
           <span id="name-line-2">Sumala Sibala-bala ♥</span>
         </p>
-        <p class="hero-note">Ada foto-foto dan sepucuk surat yang menunggumu di bawah.</p>
+        <p class="hero-note">Gulir pelan ke bawah. Ada foto dan tulisan yang menunggumu.</p>
       </header>
 
       <section class="gallery" aria-label="Galeri foto">
-        <div class="gallery-head">
-          <div>
-            <p class="section-kicker">Kenangan</p>
-            <h2>Foto-fotomu</h2>
-          </div>
-          <div class="gallery-nav">
-            <button class="icon-btn" id="gal-prev" type="button" aria-label="Foto sebelumnya">‹</button>
-            <button class="icon-btn" id="gal-next" type="button" aria-label="Foto berikutnya">›</button>
-          </div>
+        <div class="gallery-head reveal">
+          <p class="section-kicker">Kenangan</p>
+          <h2>Foto-fotomu</h2>
         </div>
-        <div class="scroller" id="scroller">
+
+        <article class="memory reveal">
           <figure class="polaroid">
             <button class="shot" type="button" data-index="0" aria-label="Perbesar foto kenangan 1">
               <img src="photos/01.jpeg" alt="Foto kenangan Sumala 1">
             </button>
           </figure>
+          <p class="memory-note">Senyum yang selalu kucari.</p>
+        </article>
+
+        <article class="memory reveal">
           <figure class="polaroid">
             <button class="shot" type="button" data-index="1" aria-label="Perbesar foto kenangan 2">
               <img src="photos/02.jpeg" alt="Foto kenangan Sumala 2">
             </button>
           </figure>
+          <p class="memory-note">Wajah yang bikin hari ini terasa lebih ringan.</p>
+        </article>
+
+        <article class="memory reveal">
           <figure class="polaroid">
             <button class="shot" type="button" data-index="2" aria-label="Perbesar foto kenangan 3">
               <img src="photos/03.jpeg" alt="Foto kenangan Sumala 3">
             </button>
           </figure>
+          <p class="memory-note">Cantikmu diam-diam, tapi hatiku ramai.</p>
+        </article>
+
+        <article class="memory reveal">
           <figure class="polaroid">
             <button class="shot" type="button" data-index="3" aria-label="Perbesar foto kenangan 4">
               <img src="photos/04.jpeg" alt="Foto kenangan Sumala 4">
             </button>
           </figure>
+          <p class="memory-note">Tetap jadi orang favoritku ya.</p>
+        </article>
+
+        <article class="memory reveal">
           <figure class="polaroid">
             <button class="shot" type="button" data-index="4" aria-label="Perbesar foto kenangan 5">
               <img src="photos/05.jpeg" alt="Foto kenangan Sumala 5">
             </button>
           </figure>
+          <p class="memory-note">Jangan sering begadang. Abang pengen kamu sehat.</p>
+        </article>
+
+        <article class="memory reveal">
           <figure class="polaroid">
             <button class="shot" type="button" data-index="5" aria-label="Perbesar foto kenangan 6">
               <img src="photos/06.jpeg" alt="Foto kenangan Sumala 6">
             </button>
           </figure>
+          <p class="memory-note">Kalau lapar, makan. Jangan ditunggu disuruh dulu.</p>
+        </article>
+
+        <article class="memory reveal">
           <figure class="polaroid">
             <button class="shot" type="button" data-index="6" aria-label="Perbesar foto kenangan 7">
               <img src="photos/07.jpeg" alt="Foto kenangan Sumala 7">
             </button>
           </figure>
-        </div>
-        <div class="dots" id="dots" role="tablist" aria-label="Pilih foto"></div>
+          <p class="memory-note">Masyaallah cantiknya. Semoga panjang umurnya.</p>
+        </article>
       </section>
 
-      <article class="letter">
+      <article class="letter reveal">
         <p class="section-kicker">Surat</p>
         <h2>Untukmu,</h2>
         <p id="letter-name">Ayang beb Sumala Sibala-bala,</p>
@@ -106,7 +125,7 @@
         <p class="tagline" id="sign-tag">orang paling cool sedunia</p>
       </article>
 
-      <p class="footer-note">Dibuat dengan cinta, untuk satu orang yang ingin ku jadikan pasangan hidup ku.</p>
+      <p class="footer-note reveal">Dibuat dengan cinta, untuk satu orang yang ingin ku jadikan pasangan hidup ku.</p>
     </div>
   </main>
 
@@ -118,6 +137,6 @@
   </dialog>
 
   <script src="config.js"></script>
-  <script src="script.js?v=6"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>

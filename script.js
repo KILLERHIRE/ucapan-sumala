@@ -1,11 +1,11 @@
 (function () {
   var cfg = window.SITE_CONFIG;
   var shots = Array.prototype.slice.call(document.querySelectorAll(".shot"));
-  var scroller = document.getElementById("scroller");
   var lightbox = document.getElementById("lightbox");
   var lightImg = document.getElementById("light-img");
   var activeIndex = 0;
   var touchStartX = 0;
+  var revealsBound = false;
 
   function nameLines(name) {
     var full = name.indexOf("♥") >= 0 ? name : name + " ♥";
@@ -98,66 +98,38 @@
     }, 3600);
   }
 
-  function scrollToIndex(index) {
-    var card = shots[index] && shots[index].closest(".polaroid");
-    if (!card) return;
-    scroller.scrollTo({
-      left: card.offsetLeft - (scroller.clientWidth - card.offsetWidth) / 2,
-      behavior: "smooth"
-    });
-  }
+  function watchReveals() {
+    var nodes;
 
-  function setDots(index) {
-    var dots = document.querySelectorAll(".dot");
-    Array.prototype.forEach.call(dots, function (dot, dotIndex) {
-      if (dotIndex === index) dot.setAttribute("aria-current", "true");
-      else dot.removeAttribute("aria-current");
-    });
-  }
+    if (revealsBound) return;
+    revealsBound = true;
+    nodes = document.querySelectorAll(".reveal");
 
-  function buildDots() {
-    var wrap = document.getElementById("dots");
-    shots.forEach(function (shot, index) {
-      var dot = document.createElement("button");
-      dot.className = "dot";
-      dot.type = "button";
-      dot.setAttribute("aria-label", "Lihat foto " + (index + 1));
-      dot.addEventListener("click", function () {
-        scrollToIndex(index);
+    function showAll() {
+      Array.prototype.forEach.call(nodes, function (el) {
+        el.classList.add("is-in");
       });
-      wrap.appendChild(dot);
-    });
-    setDots(0);
-  }
-
-  function watchGallery() {
-    var frame = 0;
-    function visibleWidth(card) {
-      var scrollerRect = scroller.getBoundingClientRect();
-      var rect = card.getBoundingClientRect();
-      var left = Math.max(rect.left, scrollerRect.left);
-      var right = Math.min(rect.right, scrollerRect.right);
-      return Math.max(0, right - left);
     }
 
-    function updateActive() {
-      var best = 0;
-      var bestVisible = -1;
-      shots.forEach(function (shot, index) {
-        var visible = visibleWidth(shot.closest(".polaroid"));
-        if (visible > bestVisible + 1) {
-          bestVisible = visible;
-          best = index;
-        }
-      });
-      activeIndex = best;
-      setDots(best);
+    if (prefersLessMotion() || !("IntersectionObserver" in window)) {
+      showAll();
+      return;
     }
-    scroller.addEventListener("scroll", function () {
-      window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(updateActive);
-    }, { passive: true });
-    updateActive();
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-in");
+        observer.unobserve(entry.target);
+      });
+    }, {
+      threshold: 0.18,
+      rootMargin: "0px 0px -10% 0px"
+    });
+
+    Array.prototype.forEach.call(nodes, function (el) {
+      observer.observe(el);
+    });
   }
 
   function showPhoto(index) {
@@ -203,20 +175,17 @@
   }
 
   applyCopy();
-  buildDots();
-  scroller.scrollLeft = 0;
-  watchGallery();
   bindLightbox();
   playLoveIntro(function () {
     openGift();
     spawnHearts();
+    window.requestAnimationFrame(function () {
+      watchReveals();
+    });
   });
 
-  document.getElementById("open-gift").addEventListener("click", openGift);
-  document.getElementById("gal-prev").addEventListener("click", function () {
-    scrollToIndex(Math.max(0, activeIndex - 1));
-  });
-  document.getElementById("gal-next").addEventListener("click", function () {
-    scrollToIndex(Math.min(shots.length - 1, activeIndex + 1));
+  document.getElementById("open-gift").addEventListener("click", function () {
+    openGift();
+    watchReveals();
   });
 })();

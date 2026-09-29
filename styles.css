@@ -143,8 +143,6 @@ main,
 
 .heart-button:focus-visible,
 .shot:focus-visible,
-.icon-btn:focus-visible,
-.dot:focus-visible,
 .lightbox-btn:focus-visible {
   outline: 3px solid var(--rose);
   outline-offset: 4px;
@@ -230,11 +228,8 @@ html.just-opened main {
 .gallery { margin-top: 2.8rem; }
 
 .gallery-head {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-inline: 0.2rem;
+  text-align: center;
+  margin-bottom: 1.6rem;
 }
 
 .gallery-head h2,
@@ -245,40 +240,22 @@ html.just-opened main {
   font-weight: 600;
 }
 
-.gallery-nav { display: flex; gap: 0.4rem; }
-
-.icon-btn,
-.lightbox-btn {
-  width: 44px;
-  height: 44px;
+.memory {
   display: grid;
-  place-items: center;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  background: var(--cream);
-  color: var(--rose-deep);
-  font-size: 1.6rem;
-  line-height: 1;
-  cursor: pointer;
+  justify-items: center;
+  gap: 0.85rem;
+  margin: 0 auto 3.2rem;
+  max-width: 520px;
 }
 
-.scroller {
-  position: relative;
-  display: flex;
-  gap: 0.9rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 1.1rem 0 1.4rem;
-  scrollbar-width: none;
-}
-
-.scroller::-webkit-scrollbar { display: none; }
+.memory:nth-child(even) .polaroid { transform: rotate(-1.4deg); }
+.memory:nth-child(odd) .polaroid { transform: rotate(1.2deg); }
 
 .polaroid {
-  flex: 0 0 100%;
-  scroll-snap-align: center;
+  width: 100%;
+  margin: 0;
   background: #fff;
-  padding: 0.7rem 0.7rem 1.35rem;
+  padding: 0.7rem 0.7rem 1.2rem;
   border-radius: 4px;
   box-shadow: var(--shadow);
 }
@@ -295,29 +272,37 @@ html.just-opened main {
 .shot img {
   display: block;
   width: 100%;
-  height: 340px;
+  height: min(62vh, 520px);
   object-fit: cover;
 }
 
-.dots {
-  display: flex;
-  justify-content: center;
-  gap: 0.4rem;
+.memory-note {
+  margin: 0;
+  text-align: center;
+  color: var(--rose);
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  line-height: 1.25;
+  max-width: 20em;
+  opacity: 0;
+  transform: translateY(18px);
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: rgba(159, 29, 69, 0.28);
-  cursor: pointer;
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
 }
 
-.dot[aria-current="true"] {
-  background: var(--rose);
-  transform: scale(1.25);
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.85s ease, transform 0.85s ease;
+}
+
+.memory.is-in .memory-note {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.9s ease 0.22s, transform 0.9s ease 0.22s;
 }
 
 .letter {
@@ -393,7 +378,17 @@ html.just-opened main {
 .lightbox-btn {
   position: absolute;
   z-index: 1;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
   background: rgba(255, 253, 251, 0.92);
+  color: var(--rose-deep);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .lightbox-close { top: 1rem; right: 1rem; }
@@ -461,7 +456,7 @@ html.just-opened main {
 }
 
 @media (min-width: 800px) {
-  .shot img { height: min(68vh, 520px); }
+  .memory { max-width: 580px; }
   .letter { padding: 2rem 2.2rem 1.7rem; }
 }
 
@@ -472,4 +467,10 @@ html.just-opened main {
   .love-burst,
   html.just-opened main { animation: none; }
   .love-intro { display: none; }
+  .reveal,
+  .memory-note {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
