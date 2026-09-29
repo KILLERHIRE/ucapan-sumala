@@ -78,7 +78,6 @@ main,
 
 .gate-kicker,
 .eyebrow,
-.count-label,
 .section-kicker {
   margin: 0;
   letter-spacing: 0.16em;
@@ -192,57 +191,9 @@ html.just-opened main {
   line-height: 1.6;
 }
 
-.count,
-.arrived,
 .letter,
 .qr-block {
   margin-top: 2.4rem;
-}
-
-.count-label { text-align: center; }
-
-.count-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.6rem;
-  margin-top: 0.9rem;
-}
-
-.count-grid div {
-  background: rgba(255, 253, 251, 0.82);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 0.85rem 0.3rem 0.7rem;
-  text-align: center;
-  box-shadow: var(--shadow);
-}
-
-.count-grid strong {
-  display: block;
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(1.8rem, 6vw, 2.8rem);
-  line-height: 1;
-  color: var(--rose-deep);
-}
-
-.count-grid span {
-  display: block;
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.arrived {
-  text-align: center;
-  background: var(--cream);
-  border-radius: 20px;
-  padding: 1.2rem 1rem;
-  box-shadow: var(--shadow);
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 1.7rem;
 }
 
 .gallery { margin-top: 2.8rem; }

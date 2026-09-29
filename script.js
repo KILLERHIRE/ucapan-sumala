@@ -5,7 +5,6 @@
   var lightbox = document.getElementById("lightbox");
   var lightImg = document.getElementById("light-img");
   var activeIndex = 0;
-  var timer = 0;
   var touchStartX = 0;
 
   function nameLines(name) {
@@ -20,47 +19,12 @@
   function applyCopy() {
     var lines = nameLines(cfg.partnerName);
     document.getElementById("birthday-label").textContent = cfg.birthdayLabel;
-    document.getElementById("countdown-date").textContent = cfg.birthdayLabel;
     document.getElementById("age").textContent = String(cfg.age);
     document.getElementById("name-line-1").textContent = lines[0];
     document.getElementById("name-line-2").textContent = lines[1] || "";
     document.getElementById("letter-name").textContent = cfg.partnerName + ",";
     document.getElementById("sign-name").textContent = cfg.fromName;
     document.getElementById("sign-tag").textContent = cfg.fromTagline;
-    document.getElementById("arrived").textContent = "Hari ini milikmu. Selamat ulang tahun ke-" + cfg.age + ".";
-  }
-
-  function pad(value) {
-    return String(value).padStart(2, "0");
-  }
-
-  function renderCountdown(now) {
-    var target = new Date(cfg.birthdayIso).getTime();
-    var diff = target - now;
-    var countdown = document.getElementById("countdown");
-    var arrived = document.getElementById("arrived");
-    var dayMs = 24 * 60 * 60 * 1000;
-
-    if (diff <= 0) {
-      countdown.hidden = true;
-      arrived.hidden = false;
-      window.clearInterval(timer);
-      return;
-    }
-
-    countdown.hidden = false;
-    arrived.hidden = true;
-    document.getElementById("days").textContent = String(Math.floor(diff / dayMs));
-    document.getElementById("hours").textContent = pad(Math.floor(diff / (60 * 60 * 1000)) % 24);
-    document.getElementById("minutes").textContent = pad(Math.floor(diff / (60 * 1000)) % 60);
-    document.getElementById("seconds").textContent = pad(Math.floor(diff / 1000) % 60);
-  }
-
-  function currentNow() {
-    if (new URLSearchParams(window.location.search).get("preview") === "hari") {
-      return new Date(cfg.birthdayIso).getTime() + 1000;
-    }
-    return Date.now();
   }
 
   function openGift() {
@@ -204,10 +168,6 @@
   watchGallery();
   bindLightbox();
   paintQr();
-  renderCountdown(currentNow());
-  timer = window.setInterval(function () {
-    renderCountdown(currentNow());
-  }, 1000);
 
   document.getElementById("open-gift").addEventListener("click", openGift);
   document.getElementById("gal-prev").addEventListener("click", function () {
