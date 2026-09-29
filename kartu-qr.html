@@ -4,28 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#fff1f4">
-  <title>Kartu QR ulang tahun Sumala</title>
+  <meta name="theme-color" content="#ffffff">
+  <title>QR</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23c81e4a' d='M16 28s-9-5.6-12.2-11C1.6 13.4 2.4 8.8 6.2 7.4 9 6.3 11.6 7.6 13 10c.6-2.6 3-4.2 5.8-3.6 3.4.8 4.8 4.6 3.6 8.2C22.6 20.4 16 28 16 28z'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600&family=Great+Vibes&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
-<body class="card-page">
-  <div class="card-shell">
-    <p class="back"><a href="index.html">Kembali ke ucapan</a></p>
-    <h1>Kartu QR</h1>
-    <p class="hero-note">Simpan gambar ini, lalu kirim lewat WhatsApp. Begitu di-scan, halaman ucapannya terbuka.</p>
-    <canvas id="card-canvas" role="img" aria-label="Kartu QR berbentuk hati untuk ucapan ulang tahun Sumala"></canvas>
-    <p class="url-note" id="url-note" hidden>
-      Alamat di kartu ini masih contoh. Ganti <code>siteUrl</code> di <code>config.js</code> dengan link website yang sudah diunggah, lalu simpan ulang gambarnya.
-    </p>
-    <button class="btn" id="save-card" type="button">Simpan gambar</button>
-  </div>
+<body class="card-page qr-only">
+  <canvas id="card-canvas" role="img" aria-label="QR"></canvas>
   <script src="vendor/qrcode.js"></script>
-  <script src="qr-heart.js?v=7"></script>
+  <script src="qr-heart.js?v=8"></script>
   <script src="config.js"></script>
-  <script src="kartu.js"></script>
+  <script src="kartu.js?v=2"></script>
 </body>
 </html>

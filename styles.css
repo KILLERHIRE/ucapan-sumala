@@ -24,7 +24,21 @@ body {
 }
 
 body.card-page {
-  background: linear-gradient(180deg, #fff6f8 0%, #f4c9d4 100%);
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+body.qr-only {
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+body.qr-only canvas {
+  width: min(100%, 420px);
+  height: auto;
+  display: block;
+  cursor: pointer;
 }
 
 .sky {
