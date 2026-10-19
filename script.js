@@ -141,6 +141,62 @@
     if (!lightbox.open) lightbox.showModal();
   }
 
+  function bindSong() {
+    var audio = document.getElementById("song");
+    var btn = document.getElementById("song-toggle");
+    var userPaused = false;
+
+    if (!audio || !btn) return;
+
+    audio.volume = 0.62;
+
+    function setPlaying(on) {
+      btn.classList.toggle("is-playing", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.setAttribute("aria-label", on ? "Hentikan lagu" : "Putar lagu");
+    }
+
+    function playSong() {
+      var playPromise = audio.play();
+      if (playPromise && playPromise.then) {
+        playPromise.then(function () {
+          setPlaying(true);
+        }).catch(function () {
+          setPlaying(false);
+        });
+      }
+    }
+
+    function unlock() {
+      if (userPaused || !audio.paused) return;
+      playSong();
+    }
+
+    btn.addEventListener("click", function (event) {
+      event.stopPropagation();
+      if (audio.paused) {
+        userPaused = false;
+        playSong();
+      } else {
+        userPaused = true;
+        audio.pause();
+        setPlaying(false);
+      }
+    });
+
+    document.addEventListener("pointerdown", function (event) {
+      if (btn.contains(event.target)) return;
+      unlock();
+    });
+    document.addEventListener("keydown", unlock);
+    audio.addEventListener("play", function () { setPlaying(true); });
+    audio.addEventListener("pause", function () {
+      if (!userPaused) setPlaying(false);
+    });
+
+    return playSong;
+  }
+
   function bindLightbox() {
     shots.forEach(function (shot) {
       shot.addEventListener("click", function () {
@@ -176,9 +232,11 @@
 
   applyCopy();
   bindLightbox();
+  var tryPlaySong = bindSong();
   playLoveIntro(function () {
     openGift();
     spawnHearts();
+    if (tryPlaySong) tryPlaySong();
     window.requestAnimationFrame(function () {
       watchReveals();
     });

@@ -143,6 +143,7 @@ main,
 
 .heart-button:focus-visible,
 .shot:focus-visible,
+.song-toggle:focus-visible,
 .lightbox-btn:focus-visible {
   outline: 3px solid var(--rose);
   outline-offset: 4px;
@@ -431,6 +432,29 @@ html.just-opened main {
   line-height: 1;
   cursor: pointer;
 }
+
+.song-toggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 32;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: rgba(255, 253, 251, 0.94);
+  color: var(--rose);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.song-icon-pause { display: none; font-size: 0.7rem; letter-spacing: 0.08em; }
+.song-icon-play { font-size: 1.35rem; line-height: 1; }
+
+.song-toggle.is-playing .song-icon-play { display: none; }
+.song-toggle.is-playing .song-icon-pause { display: block; }
 
 .lightbox-close { top: 1rem; right: 1rem; }
 .lightbox-prev { top: 50%; left: 0.6rem; transform: translateY(-50%); }
