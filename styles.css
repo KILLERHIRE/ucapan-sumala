@@ -438,20 +438,30 @@ html.just-opened main {
   right: 1rem;
   bottom: 1rem;
   z-index: 32;
-  width: 52px;
-  height: 52px;
-  display: grid;
-  place-items: center;
+  min-height: 48px;
+  padding: 0.65rem 1rem 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
   border: 1px solid var(--line);
-  border-radius: 50%;
-  background: rgba(255, 253, 251, 0.94);
+  border-radius: 999px;
+  background: rgba(255, 253, 251, 0.96);
   color: var(--rose);
   box-shadow: var(--shadow);
   cursor: pointer;
+  font-family: Nunito, "Segoe UI", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  animation: song-pulse 1.7s ease-in-out infinite;
 }
 
+.song-label { line-height: 1; }
 .song-icon-pause { display: none; font-size: 0.7rem; letter-spacing: 0.08em; }
-.song-icon-play { font-size: 1.35rem; line-height: 1; }
+.song-icon-play { font-size: 1.2rem; line-height: 1; }
+
+.song-toggle.is-playing {
+  animation: none;
+}
 
 .song-toggle.is-playing .song-icon-play { display: none; }
 .song-toggle.is-playing .song-icon-pause { display: block; }
@@ -508,6 +518,11 @@ html.just-opened main {
   to { opacity: 1; transform: none; }
 }
 
+@keyframes song-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
 @keyframes love-fly {
   0% {
     transform: translate3d(0, 0, 0) scale(0.86) rotate(-10deg);
@@ -531,6 +546,7 @@ html.just-opened main {
   .heart-beat,
   .love-burst,
   html.just-opened main { animation: none; }
+  .song-toggle { animation: none; }
   .love-intro { display: none; }
   .reveal,
   .memory-note,

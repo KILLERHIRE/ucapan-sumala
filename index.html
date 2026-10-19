@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Great+Vibes&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=17">
+  <link rel="stylesheet" href="styles.css?v=18">
 </head>
 <body>
   <div class="love-intro" id="love-intro" aria-hidden="true"></div>
@@ -149,10 +149,13 @@
     </div>
   </main>
 
-  <audio id="song" src="audio/tak-kan-hilang.mp3" preload="auto" loop playsinline></audio>
+  <audio id="song" preload="auto" loop playsinline>
+    <source src="audio/tak-kan-hilang.mp3" type="audio/mpeg">
+  </audio>
   <button class="song-toggle" id="song-toggle" type="button" aria-pressed="false" aria-label="Putar lagu">
     <span class="song-icon song-icon-play" aria-hidden="true">♪</span>
     <span class="song-icon song-icon-pause" aria-hidden="true">❚❚</span>
+    <span class="song-label" id="song-label">Putar lagu</span>
   </button>
 
   <dialog class="lightbox" id="lightbox" aria-label="Foto diperbesar">
@@ -163,6 +166,6 @@
   </dialog>
 
   <script src="config.js"></script>
-  <script src="script.js?v=10"></script>
+  <script src="script.js?v=11"></script>
 </body>
 </html>

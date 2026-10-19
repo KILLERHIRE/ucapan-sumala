@@ -144,6 +144,7 @@
   function bindSong() {
     var audio = document.getElementById("song");
     var btn = document.getElementById("song-toggle");
+    var label = document.getElementById("song-label");
     var userPaused = false;
 
     if (!audio || !btn) return;
@@ -154,6 +155,7 @@
       btn.classList.toggle("is-playing", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
       btn.setAttribute("aria-label", on ? "Hentikan lagu" : "Putar lagu");
+      if (label) label.textContent = on ? "Lagu nyala" : "Putar lagu";
     }
 
     function playSong() {
