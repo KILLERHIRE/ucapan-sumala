@@ -150,6 +150,7 @@
     if (!audio || !btn) return;
 
     audio.volume = 0.62;
+    audio.autoplay = true;
 
     function setPlaying(on) {
       btn.classList.toggle("is-playing", on);
@@ -195,6 +196,17 @@
     audio.addEventListener("pause", function () {
       if (!userPaused) setPlaying(false);
     });
+    audio.addEventListener("canplay", unlock);
+    audio.addEventListener("canplaythrough", unlock);
+    window.addEventListener("pageshow", unlock);
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) unlock();
+    });
+
+    playSong();
+    window.setTimeout(unlock, 400);
+    window.setTimeout(unlock, 1200);
+    window.setTimeout(unlock, 2800);
 
     return playSong;
   }

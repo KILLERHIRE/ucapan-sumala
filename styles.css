@@ -64,13 +64,14 @@ body.qr-only canvas {
   inset: 0;
   z-index: 30;
   overflow: hidden;
-  pointer-events: none;
+  pointer-events: auto;
   background: linear-gradient(180deg, #fff6f8 0%, #f4c9d4 100%);
 }
 
 .love-intro.is-done {
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity 0.7s ease, visibility 0.7s ease;
 }
 
