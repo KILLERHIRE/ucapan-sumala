@@ -60,13 +60,38 @@
 
   function playLoveIntro(done) {
     var intro = document.getElementById("love-intro");
+    var audio = document.getElementById("song");
     var count = 56;
     var i;
     var heart;
     var delay;
     var duration;
+    var finished = false;
+
+    function finish() {
+      if (finished) return;
+      finished = true;
+      if (intro) {
+        intro.classList.add("is-done");
+        intro.classList.remove("needs-tap");
+      }
+      done();
+    }
+
+    function songIsOn() {
+      return audio && !audio.paused && !audio.ended;
+    }
+
+    function startSongNow() {
+      if (!audio) return;
+      var playPromise = audio.play();
+      if (playPromise && playPromise.catch) {
+        playPromise.catch(function () {});
+      }
+    }
 
     if (!intro || prefersLessMotion()) {
+      startSongNow();
       done();
       return;
     }
@@ -92,9 +117,23 @@
       intro.appendChild(heart);
     }
 
+    startSongNow();
+
+    intro.addEventListener("pointerdown", function () {
+      startSongNow();
+      finish();
+    });
+
     window.setTimeout(function () {
-      intro.classList.add("is-done");
-      done();
+      if (songIsOn()) {
+        finish();
+        return;
+      }
+      intro.classList.add("needs-tap");
+    }, 1600);
+
+    window.setTimeout(function () {
+      if (songIsOn()) finish();
     }, 3600);
   }
 
